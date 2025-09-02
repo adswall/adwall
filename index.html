@@ -1,0 +1,168 @@
+<!--
+  AdWall — just ads, everywhere
+  Copyright (c) 2025 [YOUR NAME or ORG]
+  SPDX-License-Identifier: LicenseRef-SA-NC-1.0
+
+  NOTE:
+  - Remplacez vos IDs d’emplacements AdSense dans AD_SLOTS (YOUR_SLOT_ID_*).
+  - Le publisher ID AdSense (client) ci-dessous doit être le vôtre: ca-pub-9411950027978678.
+  - Page volontairement sans contenu éditorial; vérifiez les politiques AdSense.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="referrer" content="origin-when-cross-origin" />
+  <title>AdWall — just ads, everywhere</title>
+
+  <!-- AdSense global loader (charge au démarrage) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;        /* dark background so ads stand out */
+      --grid:#1e293b;      /* grid lines */
+      --cross:#94a3b8;     /* center cross */
+      --title:#e2e8f0;     /* page title */
+    }
+    html,body{height:100%;}
+    body{
+      margin:0; background:var(--bg); color:var(--title);
+      overflow:scroll; overscroll-behavior:none;
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    /* Sticky header with centered title */
+    header{
+      position:sticky; top:0; left:0; right:0; z-index:5;
+      display:flex; justify-content:center; align-items:center;
+      height:56px; background:rgba(11,18,32,.7); backdrop-filter: blur(6px);
+      border-bottom:1px solid rgba(148,163,184,.25);
+    }
+    header h1{margin:0; font-size:18px; letter-spacing:.5px;}
+
+    /* Huge canvas area to allow 4-way scroll */
+    .canvas{
+      position:relative;
+      width:320vw;   /* 3.2× viewport width */
+      height:320vh;  /* 3.2× viewport height */
+      margin:0 auto;
+      background-image: linear-gradient(transparent 95%, var(--grid) 95%), linear-gradient(90deg, transparent 95%, var(--grid) 95%);
+      background-size:60px 60px; /* subtle grid */
+    }
+    /* Center cross (vertical + horizontal guide lines) */
+    .canvas:before, .canvas:after{ content:""; position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:none; }
+    .canvas:before{ /* vertical line */ left:50%; right:auto; width:2px; background:var(--cross); transform:translateX(-1px); }
+    .canvas:after{  /* horizontal line */ top:50%; bottom:auto; height:2px; background:var(--cross); transform:translateY(-1px); }
+
+    /* Quadrants anchored to center */
+    .quad{ position:absolute; display:grid; gap:16px; padding:24px; box-sizing:border-box; }
+    .quad.grid-6x6{ grid-template-columns: repeat(6, minmax(260px, 1fr)); }
+    #quad-nw{ right:50%; bottom:50%; width:150vw; height:150vh; }
+    #quad-ne{  left:50%; bottom:50%; width:150vw; height:150vh; }
+    #quad-sw{ right:50%;    top:50%; width:150vw; height:150vh; }
+    #quad-se{  left:50%;    top:50%; width:150vw; height:150vh; }
+
+    /* Ad tiles */
+    .tile{
+      position:relative;
+      background:#0f172a; border:1px solid #0b1220; border-radius:14px; padding:10px;
+      display:flex; align-items:center; justify-content:center; min-height:180px;
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+    }
+    .tile .label{ position:absolute; inset:auto 10px 10px auto; color:#94a3b8; font-size:11px; font-weight:600; }
+
+    /* AdSense <ins> must be display:block */
+    .adsbygoogle{ display:block; width:100%; min-height:120px; }
+
+    /* Center legend */
+    .legend{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; color:#cbd5e1; font-size:12px; text-align:center; background:rgba(2,6,23,.7); padding:6px 10px; border-radius:8px; border:1px solid rgba(148,163,184,.25); }
+
+    /* Footer note (license/info) — discret */
+    footer{ position:fixed; right:10px; bottom:10px; color:#94a3b8; font-size:11px; background:rgba(2,6,23,.6); padding:6px 8px; border-radius:8px; border:1px solid rgba(148,163,184,.25); }
+    footer a{ color:#cbd5e1; text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AdWall — just ads, everywhere</h1>
+  </header>
+
+  <div id="canvas" class="canvas" aria-label="Scrollable advertising canvas">
+    <div class="legend">Scroll ↔ ↕ to explore the ad wall</div>
+
+    <!-- Four quadrants (all AdSense in this version) -->
+    <section id="quad-nw" class="quad grid-6x6" aria-label="North-West quadrant"></section>
+    <section id="quad-ne" class="quad grid-6x6" aria-label="North-East quadrant"></section>
+    <section id="quad-sw" class="quad grid-6x6" aria-label="South-West quadrant"></section>
+    <section id="quad-se" class="quad grid-6x6" aria-label="South-East quadrant"></section>
+  </div>
+
+  <footer>
+    <span>License: SA‑NC 1.0 — non‑commercial only.</span>
+  </footer>
+
+  <script>
+    // 1) Center the view on the middle cross at load
+    function centerOnLoad(){
+      const c = document.getElementById('canvas');
+      const x = (c.scrollWidth - window.innerWidth) / 2;
+      const y = (c.scrollHeight - window.innerHeight) / 2;
+      // use standard values: 'auto' | 'smooth'
+      window.scrollTo({ left: x, top: y, behavior: 'auto' });
+    }
+    if (document.readyState === 'complete') centerOnLoad();
+    else window.addEventListener('load', centerOnLoad);
+
+    // 2) Populate each quadrant with AdSense tiles
+    // Replace with your own AdSense ad unit IDs
+    const AD_SLOTS = ['YOUR_SLOT_ID_1','YOUR_SLOT_ID_2','YOUR_SLOT_ID_3','YOUR_SLOT_ID_4'];
+
+    function createAdTile(slotId){
+      const wrap = document.createElement('div');
+      wrap.className = 'tile';
+
+      const ins = document.createElement('ins');
+      ins.className = 'adsbygoogle';
+      ins.setAttribute('style','display:block');
+      ins.setAttribute('data-ad-client','ca-pub-9411950027978678');
+      ins.setAttribute('data-ad-slot', slotId);
+      ins.setAttribute('data-ad-format','auto');
+      ins.setAttribute('data-full-width-responsive','true');
+      wrap.appendChild(ins);
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = 'AdSense';
+      wrap.appendChild(label);
+
+      return wrap;
+    }
+
+    function populate(containerId, rows=6, cols=6){
+      const el = document.getElementById(containerId);
+      const total = rows * cols;
+      for(let i=0;i<total;i++){
+        const slotId = AD_SLOTS[i % AD_SLOTS.length];
+        el.appendChild(createAdTile(slotId));
+      }
+    }
+
+    function requestAllAds(){
+      const nodes = document.querySelectorAll('ins.adsbygoogle');
+      window.adsbygoogle = window.adsbygoogle || [];
+      nodes.forEach(() => { try { window.adsbygoogle.push({}); } catch(e){} });
+    }
+
+    // Populate then ask AdSense to render
+    populate('quad-nw');
+    populate('quad-ne');
+    populate('quad-sw');
+    populate('quad-se');
+
+    if (document.readyState === 'complete') requestAllAds();
+    else window.addEventListener('load', requestAllAds);
+  </script>
+</body>
+</html>
