@@ -1,21 +1,18 @@
 <!--
-  AdWall Lab — Ad recommendation museum
-  Goal: keep the WTF “just ads” vibe, BUT add enough real content + sane ad density to better fit AdSense policies.
-
-  How to use (beginner):
-  1) Replace the four YOUR_SLOT_ID_* values below with your AdSense ad unit IDs.
-  2) Keep your AdSense client ID (publisher): ca-pub-9411950027978678
-  3) Deploy this single file. Start in "Balanced" mode. Toggle "WTF Mode" for the full wall.
-
-  Compliance tips:
-  - Provide real, unique content (About, Method, FAQ) — already included below (replace with your own words to be even safer).
-  - Label ads as “Advertisement”. Do NOT invite clicks. No sticky/popups.
-  - Keep a reasonable ad density by default. The WTF grid is behind a user toggle.
-  - Add Privacy/Contact links.
-
-  License header (optional):
+  AdWall Lab — adwall.net
+  SAFE Ads default (non‑personalized) + SuperWall (huge 4‑way grid) + multi‑provider ready
   Copyright (c) 2025 [YOUR NAME or ORG]
   SPDX-License-Identifier: LicenseRef-SA-NC-1.0
+
+  WHAT'S NEW
+  - "Use Safe Ads" button in the consent banner (default option): loads **non‑personalized** Google ads via Consent Mode (ad_personalization=denied).
+  - "Personalized Ads" available in Manage dialog.
+  - SuperWall: MUCH larger canvas (800vw × 800vh) with mixed ad tile sizes (1×1, 2×2, 3×2, etc.).
+  - Multi‑provider placeholders: structure ready for other networks later; consent categories split so you can gate each provider.
+
+  IMPORTANT
+  - For EEA/CH, do NOT imply consent. Here, the user must click **Use Safe Ads** or **Accept all**; otherwise no ad scripts load.
+  - Non‑personalized serving depends on Google Consent Mode behavior. This template sets consent states; to be fully compliant, pair with an approved CMP if needed.
 -->
 <!doctype html>
 <html lang="en">
@@ -25,10 +22,26 @@
   <meta name="robots" content="index,follow" />
   <meta name="referrer" content="origin-when-cross-origin" />
   <title>AdWall Lab — Ad recommendation museum</title>
-  <meta name="description" content="AdWall Lab is a playful, educational page about online advertising. Compare ad recommendations in a safe, content-first layout — then switch to WTF mode to see a full ad wall." />
+  <meta name="description" content="AdWall Lab is a playful, educational page about online advertising. Compare ad recommendations in a content‑first layout — then switch to WTF SuperWall for a huge ad wall." />
+  <link rel="canonical" href="https://adwall.net/" />
 
-  <!-- AdSense loader (ok to load in head; we render units lazily when visible) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script>
+  <!-- Google Consent Mode v2 base (no GA config needed; we only use consent API) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    // Default: everything denied until user acts
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'analytics_storage': 'denied',
+      'functionality_storage': 'denied'
+    });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_PLACEHOLDER"></script>
+
+  <!-- We DO NOT preload AdSense; it will load after consent via JS -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script> -->
 
   <style>
     :root{ --bg:#0b1220; --ink:#e2e8f0; --muted:#9aa7b7; --brand:#38bdf8; --card:#0f172a; --line:#1e293b; --accent:#60a5fa; --ok:#16a34a; --warn:#f59e0b; --br:14px; }
@@ -49,41 +62,67 @@
     .hero h1{margin:.2em 0 .2em; font-size:28px}
     .hero p{margin:0; color:var(--muted)}
 
-    /* Content sections */
     .section{max-width:1100px; margin:20px auto; padding:0 16px}
     .grid{display:grid; gap:16px}
     @media(min-width:900px){ .grid.cols-3{ grid-template-columns:2fr 1fr 1fr } }
     .card{background:var(--card); border:1px solid var(--line); border-radius:var(--br); padding:16px}
     .card h3{margin-top:0}
 
-    /* Balanced layout: content-first with a few ads */
     .adblock{border:1px dashed #2b3a4d; background:#0c1425; padding:10px; border-radius:12px; position:relative}
     .adblock .label{position:absolute; top:6px; right:8px; font-size:11px; color:#9aa7b7; letter-spacing:.5px}
     .adsbygoogle{display:block; width:100%; min-height:120px}
 
-    /* WTF “wall” grid (hidden by default) */
+    /* ===== SuperWall (huge 4-way grid, mixed sizes) ===== */
     .wall{display:none; position:relative; margin:30px auto; max-width:1100px; border:1px solid var(--line); border-radius:var(--br)}
     .wall .toolbar{display:flex; gap:10px; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid var(--line)}
-    .wall .toolbar .mode{display:flex; gap:8px; align-items:center}
-    .wall .canvas{position:relative; width:220vw; height:220vh; margin:0; background-image: linear-gradient(transparent 95%, #1e293b 95%), linear-gradient(90deg, transparent 95%, #1e293b 95%); background-size:60px 60px}
+    .wall .canvas{position:relative; width:800vw; height:800vh; margin:0; background-image: linear-gradient(transparent 95%, #1e293b 95%), linear-gradient(90deg, transparent 95%, #1e293b 95%); background-size:60px 60px}
     .wall .canvas:before,.wall .canvas:after{content:""; position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:none}
     .wall .canvas:before{left:50%; width:2px; background:#94a3b8; transform:translateX(-1px)}
     .wall .canvas:after{top:50%; height:2px; background:#94a3b8; transform:translateY(-1px)}
-    .quad{position:absolute; display:grid; gap:14px; padding:20px}
-    .quad.grid-4x4{grid-template-columns: repeat(4, minmax(240px,1fr))}
-    #q-nw{right:50%; bottom:50%; width:100vw; height:100vh}
-    #q-ne{left:50%; bottom:50%; width:100vw; height:100vh}
-    #q-sw{right:50%; top:50%; width:100vw; height:100vh}
-    #q-se{left:50%; top:50%; width:100vw; height:100vh}
-    .tile{position:relative; background:#0f172a; border:1px solid #0b1220; border-radius:12px; padding:8px; min-height:160px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(0,0,0,.25)}
+
+    .quad{position:absolute; display:grid; gap:14px; padding:20px; box-sizing:border-box}
+    /* Super grid: many columns/rows to allow various spans */
+    .quad.super{ grid-template-columns: repeat(24, 180px); grid-auto-rows: 120px; }
+    #q-nw{right:50%; bottom:50%; width:350vw; height:350vh}
+    #q-ne{left:50%; bottom:50%; width:350vw; height:350vh}
+    #q-sw{right:50%; top:50%; width:350vw; height:350vh}
+    #q-se{left:50%; top:50%; width:350vw; height:350vh}
+
+    .tile{position:relative; background:#0f172a; border:1px solid #0b1220; border-radius:12px; padding:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(0,0,0,.25)}
     .tile .label{position:absolute; inset:auto 8px 8px auto; color:#9aa7b7; font-size:11px}
+    /* span classes (w × h in grid cells) */
+    .span-1x1{ grid-column:span 1; grid-row:span 1 }
+    .span-2x1{ grid-column:span 2; grid-row:span 1 }
+    .span-1x2{ grid-column:span 1; grid-row:span 2 }
+    .span-2x2{ grid-column:span 2; grid-row:span 2 }
+    .span-3x2{ grid-column:span 3; grid-row:span 2 }
+    .span-2x3{ grid-column:span 2; grid-row:span 3 }
+    .span-3x3{ grid-column:span 3; grid-row:span 3 }
 
     .controls{display:flex; gap:10px; align-items:center}
     .btn{background:var(--accent); color:#fff; border:0; padding:8px 12px; border-radius:10px; cursor:pointer}
     .btn.secondary{background:#1f2937}
     .hint{color:var(--muted); font-size:13px}
 
-    footer{max-width:1100px; margin:40px auto 50px; padding:0 16px; color:var(--muted); font-size:13px}
+    footer{max-width:1100px; margin:40px auto 60px; padding:0 16px; color:var(--muted); font-size:13px}
+
+    /* ===== GDPR Consent UI ===== */
+    .consent-banner{position:fixed; bottom:12px; left:12px; right:12px; background:#111827; color:#fff; padding:14px; border-radius:12px; display:none; z-index:100}
+    .consent-banner .row{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+    .consent-link{cursor:pointer; text-decoration:underline}
+    .backdrop{position:fixed; inset:0; background:rgba(2,6,23,.55); display:none; z-index:110}
+    .consent-modal{position:fixed; inset:0; display:none; place-items:center; z-index:120}
+    .consent-card{background:#fff; color:#0f172a; max-width:720px; width:94%; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:18px}
+    .switch{position:relative; display:inline-block; width:44px; height:24px; margin-left:8px}
+    .switch input{opacity:0; width:0; height:0}
+    .slider{position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#e5e7eb; border-radius:999px; transition:.2s}
+    .slider:before{position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    input:checked + .slider{background:#2563eb}
+    input:checked + .slider:before{transform:translateX(20px)}
+    .consent-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap}
+    .btn.ghost{background:#e5e7eb; color:#111827}
+    .hr{height:1px; background:#e5e7eb; margin:10px 0}
+    .radio-row{display:flex; gap:10px; align-items:center; margin:8px 0}
   </style>
 </head>
 <body>
@@ -95,21 +134,22 @@
         <a href="#method">Method</a>
         <a href="#faq">FAQ</a>
         <a href="#exhibits">Exhibits</a>
+        <a class="consent-link" id="openConsent">Cookie settings</a>
       </nav>
     </div>
   </header>
 
   <section class="hero" id="top">
-    <h1>The ad recommendation museum — content first, then a WTF wall</h1>
-    <p>AdWall Lab is an educational experiment about online advertising. We explain how display ads work and let you compare recommendations. By default, we keep a content‑first, respectful layout. If you want the full “wall of ads”, switch on WTF Mode below.</p>
+    <h1>The ad recommendation museum — content first, then a WTF SuperWall</h1>
+    <p>By default we propose <em>Safe Ads</em> (non‑personalized). You can switch to Personalized Ads in Cookie settings. SuperWall is a very large, 4‑direction scrollable grid to visualize ad placements of various sizes.</p>
   </section>
 
-  <!-- Content-first layout with a few ad slots (balanced) -->
+  <!-- Content-first layout with a few AdSense slots (balanced) -->
   <section class="section grid cols-3" id="about">
     <article class="card">
       <h3>What is this?</h3>
-      <p>Online advertising funds much of the free web. Yet, most of us rarely see ads side by side from the user’s perspective. AdWall Lab offers a transparent, playful way to observe ads in context, learn common formats, and reflect on relevance, repetition, and brand safety.</p>
-      <p>We do not encourage clicks. Ads are clearly labeled. We avoid intrusive formats and keep page performance and accessibility in mind.</p>
+      <p>Online advertising funds much of the free web. AdWall Lab offers a transparent, playful way to observe ads in context, learn common formats, and reflect on relevance, repetition, and brand safety.</p>
+      <p>Ads are clearly labeled. We avoid intrusive formats and keep performance and accessibility in mind.</p>
       <div class="adblock" aria-label="Advertisement">
         <span class="label">Advertisement</span>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_1" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -117,7 +157,7 @@
     </article>
     <aside class="card">
       <h3>Glossary (short)</h3>
-      <p><strong>Display ad:</strong> a banner or visual unit served into a slot on a page. <strong>Contextual:</strong> targeted by page content. <strong>Behavioral:</strong> based on your past activity. <strong>Fill rate:</strong> share of requests that serve an ad.</p>
+      <p><strong>Display ad:</strong> banner/visual unit. <strong>Contextual:</strong> targeted by page content. <strong>Behavioral:</strong> based on past activity. <strong>Fill rate:</strong> share of requests that serve an ad.</p>
       <div class="adblock" aria-label="Advertisement">
         <span class="label">Advertisement</span>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_2" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -125,7 +165,7 @@
     </aside>
     <aside class="card">
       <h3>Notes on relevance</h3>
-      <p>Ads you see may differ from someone else’s due to location, device, consent, and cookies. Empty spaces can happen if no eligible ad is available at the moment.</p>
+      <p>Ads differ due to location, device, consent, and cookies. Empty spaces can happen if no eligible ad is available at the moment.</p>
       <div class="adblock" aria-label="Advertisement">
         <span class="label">Advertisement</span>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_3" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -136,8 +176,7 @@
   <section class="section" id="method">
     <div class="card">
       <h3>Method & ethics</h3>
-      <p>We keep a content‑first approach, use clear ad labels, and avoid attention traps. Our goal is to observe recommendations — not to maximize revenue. We do not invite clicks and we don’t place ads in deceptive positions. We treat cookies and consent according to local requirements.</p>
-      <p>Technical note: we lazy‑render units that come into view to reduce network load and improve performance. This does not refresh ads automatically; it simply defers the first load until you scroll to them.</p>
+      <p>We keep a content‑first approach, use clear ad labels, and avoid attention traps. Our goal is to observe recommendations — not to maximize revenue. We do not invite clicks or place ads in deceptive positions. We treat cookies and consent according to local requirements.</p>
       <div class="adblock" aria-label="Advertisement">
         <span class="label">Advertisement</span>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_4" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -149,23 +188,23 @@
     <div class="card">
       <div class="controls">
         <strong>Exhibits</strong>
-        <button class="btn" id="toggleWall">Enable WTF Mode</button>
+        <button class="btn" id="toggleWall">Enable SuperWall</button>
         <button class="btn secondary" id="centerWall" title="Center the wall">Center</button>
-        <span class="hint">Default is balanced (few units). WTF Mode reveals a large 4‑way scrolling wall.</span>
+        <span class="hint">SuperWall: huge 4‑way grid with mixed ad sizes (1×1, 2×2, 3×2…).</span>
       </div>
     </div>
 
-    <!-- WTF WALL (hidden by default; shows on toggle) -->
+    <!-- SUPERWALL (hidden by default; shows on toggle) -->
     <div id="wall" class="wall" aria-hidden="true">
       <div class="toolbar">
-        <div class="mode"><strong>WTF Mode</strong> · <span class="hint">Big grid, still no popups, no sticky overlays.</span></div>
-        <div class="hint">Tip: use a trackpad or hold Shift+Wheel to scroll horizontally.</div>
+        <div class="mode"><strong>SuperWall</strong> · <span class="hint">No popups. No sticky overlays.</span></div>
+        <div class="hint">Tip: trackpad or Shift+Wheel to scroll horizontally.</div>
       </div>
       <div id="canvas" class="canvas" aria-label="Scrollable advertising canvas">
-        <section id="q-nw" class="quad grid-4x4" aria-label="North-West quadrant"></section>
-        <section id="q-ne" class="quad grid-4x4" aria-label="North-East quadrant"></section>
-        <section id="q-sw" class="quad grid-4x4" aria-label="South-West quadrant"></section>
-        <section id="q-se" class="quad grid-4x4" aria-label="South-East quadrant"></section>
+        <section id="q-nw" class="quad super" aria-label="North-West quadrant"></section>
+        <section id="q-ne" class="quad super" aria-label="North-East quadrant"></section>
+        <section id="q-sw" class="quad super" aria-label="South-West quadrant"></section>
+        <section id="q-se" class="quad super" aria-label="South-East quadrant"></section>
       </div>
     </div>
   </section>
@@ -173,93 +212,206 @@
   <section class="section" id="faq">
     <div class="card">
       <h3>FAQ</h3>
-      <p><strong>Do you track me?</strong> We don’t run our own trackers. Ad networks may use cookies if you allowed them. You can use your browser’s ad/privacy settings any time.</p>
-      <p><strong>Why do I sometimes see nothing?</strong> Ad serving depends on eligibility, budget, geography, and your consent. Sometimes there’s simply no match right now.</p>
-      <p><strong>Can I use this page commercially?</strong> No. The code is published under a non‑commercial license (see footer). Contact us for commercial licensing.</p>
+      <p><strong>Other providers?</strong> The layout is ready to host additional providers (Media.net, Taboola, etc.) with separate consent toggles. We currently load Google AdSense only.</p>
+      <p><strong>Do you track me?</strong> We don’t run our own trackers. Ad partners may use cookies if you allow them. You can change your choice any time in Cookie settings.</p>
+      <p><strong>Why do I sometimes see nothing?</strong> It depends on eligibility, budget, geography, and consent.</p>
     </div>
   </section>
 
   <footer>
-    <p>© 2025 AdWall Lab — Educational experiment · License: SA‑NC 1.0 (non‑commercial). · <a href="#top">Back to top</a></p>
+    <p>© 2025 AdWall Lab — Educational experiment · License: SA‑NC 1.0 (non‑commercial). · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a> · <a id="openConsent2" class="consent-link">Cookie settings</a></p>
   </footer>
 
+  <!-- ===== GDPR Consent Banner + Modal ===== -->
+  <div class="consent-banner" id="consentBanner">
+    <div style="margin-bottom:6px;">This site proposes <strong>Safe Ads</strong> (non‑personalized) by default. Choose <em>Use Safe Ads</em>, <em>Reject all</em>, or <em>Manage</em> preferences.</div>
+    <div class="row">
+      <button class="btn ghost" id="rejectAll">Reject all</button>
+      <button class="btn ghost" id="manageCookies">Manage</button>
+      <button class="btn" id="acceptSafe">Use Safe Ads</button>
+    </div>
+  </div>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="consent-modal" id="consentModal" role="dialog" aria-modal="true" aria-labelledby="cookieTitle">
+    <div class="consent-card">
+      <h3 id="cookieTitle">Cookie preferences (GDPR)</h3>
+      <p class="hint">Choose your ad & analytics preferences. You can change this anytime via “Cookie settings”.</p>
+
+      <div class="hr"></div>
+      <p><strong>Advertising</strong> (choose one)</p>
+      <label class="radio-row"><input type="radio" name="adsMode" value="off"> No advertising</label>
+      <label class="radio-row"><input type="radio" name="adsMode" value="safe" checked> Safe Ads (non‑personalized)</label>
+      <label class="radio-row"><input type="radio" name="adsMode" value="personalized"> Personalized Ads</label>
+
+      <div class="hr"></div>
+      <p><strong>Analytics</strong> (anonymous)</p>
+      <label class="switch"><input type="checkbox" id="c-ana"><span class="slider"></span></label>
+
+      <p style="margin-top:10px"><strong>Functional</strong> (remember preferences)</p>
+      <label class="switch"><input type="checkbox" id="c-func" checked><span class="slider"></span></label>
+
+      <div class="consent-actions">
+        <button class="btn ghost" id="closeManage">Close</button>
+        <button class="btn" id="saveChoices">Save choices</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // =============== CONFIG ===============
+    // =================== CONFIG ===================
     const AD_CLIENT = 'ca-pub-9411950027978678';
-    const AD_SLOTS = ['YOUR_SLOT_ID_1','YOUR_SLOT_ID_2','YOUR_SLOT_ID_3','YOUR_SLOT_ID_4'];
+    const AD_SLOTS  = ['YOUR_SLOT_ID_1','YOUR_SLOT_ID_2','YOUR_SLOT_ID_3','YOUR_SLOT_ID_4'];
+    const isAdTest  = location.search.includes('adtest=1');
 
-    // =============== LAZY RENDER (balanced sections) ===============
-    function lazyRenderAds(container=document){
-      const insNodes = container.querySelectorAll('ins.adsbygoogle');
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{
-          if(e.isIntersecting){ try{ (window.adsbygoogle=window.adsbygoogle||[]).push({}); }catch(err){}
-            io.unobserve(e.target);
-          }
-        });
-      }, {root:null, rootMargin:'200px', threshold:0});
-      insNodes.forEach(n=> io.observe(n));
+    // If later you add providers, put their keys here and gate with consent as we do for AdSense
+    // const PROVIDERS = { adsense: true, medianet: false, taboola: false };
+
+    // =================== CONSENT MANAGER ===================
+    const CONSENT_KEY='adwall_consent_v3';
+    const banner=$('#consentBanner'), modal=$('#consentModal'), backdrop=$('#backdrop');
+    const btnManage=$('#manageCookies'), btnReject=$('#rejectAll'), btnAcceptSafe=$('#acceptSafe');
+    const linkOpen1=$('#openConsent'), linkOpen2=$('#openConsent2');
+    const btnClose=$('#closeManage'), btnSave=$('#saveChoices');
+
+    function $(s){ return document.querySelector(s); }
+    function getConsent(){ try{ return JSON.parse(localStorage.getItem(CONSENT_KEY)||'null'); }catch{ return null; } }
+    function setConsent(obj){ localStorage.setItem(CONSENT_KEY, JSON.stringify(obj)); localStorage.setItem('adwall_consent_time', String(Date.now())); }
+
+    function showBanner(){ banner.style.display='block'; }
+    function hideBanner(){ banner.style.display='none'; }
+    function openModal(){ backdrop.style.display='block'; modal.style.display='grid'; prefillManage(); }
+    function closeModal(){ backdrop.style.display='none'; modal.style.display='none'; }
+
+    function prefillManage(){
+      const c=getConsent();
+      const mode=(c&&c.adsMode)||'safe';
+      document.querySelectorAll('input[name="adsMode"]').forEach(r=> r.checked = (r.value===mode));
+      $('#c-ana').checked = !!(c&&c.analytics);
+      $('#c-func').checked = (c? !!c.functional : true);
     }
-    if(document.readyState==='complete') lazyRenderAds();
-    else window.addEventListener('load', ()=> lazyRenderAds());
 
-    // =============== WTF WALL POPULATION ===============
+    btnManage.addEventListener('click', e=>{ e.preventDefault(); openModal(); });
+    linkOpen1.addEventListener('click', e=>{ e.preventDefault(); openModal(); });
+    linkOpen2.addEventListener('click', e=>{ e.preventDefault(); openModal(); });
+    btnClose.addEventListener('click', e=>{ e.preventDefault(); closeModal(); });
+
+    btnAcceptSafe.addEventListener('click', ()=>{
+      const cons={ adsMode:'safe', analytics:false, functional:true };
+      setConsent(cons); hideBanner(); applyConsent(cons);
+    });
+    btnReject.addEventListener('click', ()=>{
+      const cons={ adsMode:'off', analytics:false, functional:false };
+      setConsent(cons); hideBanner(); applyConsent(cons);
+    });
+
+    btnSave.addEventListener('click', ()=>{
+      const mode = document.querySelector('input[name="adsMode"]:checked')?.value || 'off';
+      const cons = { adsMode:mode, analytics:$('#c-ana').checked, functional:$('#c-func').checked };
+      setConsent(cons); hideBanner(); closeModal(); applyConsent(cons);
+    });
+
+    function applyConsent(c){
+      // Update Google Consent Mode
+      const updates = {
+        'analytics_storage': c.analytics ? 'granted':'denied',
+        'functionality_storage': c.functional ? 'granted':'denied',
+        'ad_storage': (c.adsMode==='off') ? 'denied' : 'granted',
+        'ad_user_data': (c.adsMode==='personalized') ? 'granted' : 'denied',
+        'ad_personalization': (c.adsMode==='personalized') ? 'granted' : 'denied'
+      };
+      gtag('consent','update', updates);
+
+      // Load / skip providers
+      if(c.adsMode==='off'){ /* nothing */ }
+      else { loadAdSenseOnce(); }
+
+      if(c.analytics){ loadAnalyticsOnce(); }
+    }
+
+    // Show banner on first visit
+    const saved=getConsent(); if(!saved){ showBanner(); } else { applyConsent(saved); }
+
+    // =================== AD LOADING ===================
+    let adScriptLoaded=false;
+    function loadAdSenseOnce(){
+      if(adScriptLoaded){ requestVisibleAds(); return; }
+      if(isAdTest){ document.querySelectorAll('ins.adsbygoogle').forEach(n=> n.setAttribute('data-adtest','on')); }
+      const s=document.createElement('script');
+      s.async=true; s.src=`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`; s.crossOrigin='anonymous';
+      s.onload=()=>{ adScriptLoaded=true; requestVisibleAds(); };
+      document.head.appendChild(s);
+    }
+
+    function requestVisibleAds(container=document){
+      const nodes = container.querySelectorAll('ins.adsbygoogle');
+      window.adsbygoogle = window.adsbygoogle || [];
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ try{ window.adsbygoogle.push({}); }catch(err){} io.unobserve(e.target); } });
+      }, {root:null, rootMargin:'200px', threshold:0});
+      nodes.forEach(n=> io.observe(n));
+    }
+
+    // =================== SUPERWALL ===================
+    function randomSpan(){
+      const bag = ['span-1x1','span-2x1','span-1x2','span-2x2','span-3x2','span-2x3','span-3x3'];
+      // bias towards smaller tiles so the grid fills nicely
+      const weights = [5,4,4,3,2,2,1];
+      const total = weights.reduce((a,b)=>a+b,0);
+      let r=Math.floor(Math.random()*total); for(let i=0;i<bag.length;i++){ if(r<weights[i]) return bag[i]; r-=weights[i]; }
+      return 'span-1x1';
+    }
+
     function createTile(slotId){
-      const wrap = document.createElement('div');
-      wrap.className = 'tile';
-      const ins = document.createElement('ins');
-      ins.className = 'adsbygoogle';
-      ins.setAttribute('style','display:block');
+      const wrap=document.createElement('div'); wrap.className=`tile ${randomSpan()}`;
+      const ins=document.createElement('ins'); ins.className='adsbygoogle'; ins.style.display='block';
       ins.setAttribute('data-ad-client', AD_CLIENT);
       ins.setAttribute('data-ad-slot', slotId);
       ins.setAttribute('data-ad-format','auto');
       ins.setAttribute('data-full-width-responsive','true');
-      const label = document.createElement('span'); label.className='label'; label.textContent='Advertisement';
+      if(isAdTest) ins.setAttribute('data-adtest','on');
+      const label=document.createElement('span'); label.className='label'; label.textContent='Advertisement';
       wrap.appendChild(ins); wrap.appendChild(label);
       return wrap;
     }
 
-    function populateWall(){
-      const quads = ['q-nw','q-ne','q-sw','q-se'];
-      quads.forEach(id=>{
-        const el = document.getElementById(id);
-        el.innerHTML = '';
-        const total = 16; // 4x4 grid = 16 tiles per quadrant
-        for(let i=0;i<total;i++){
+    function populateSuperWall(){
+      const ids=['#q-nw','#q-ne','#q-sw','#q-se'];
+      ids.forEach(sel=>{
+        const el=$(sel); el.innerHTML='';
+        // create a LOT of tiles per quadrant
+        const count = 220; // adjust if too heavy on your device
+        for(let i=0;i<count;i++){
           const slot = AD_SLOTS[i % AD_SLOTS.length];
           el.appendChild(createTile(slot));
         }
       });
-      // Lazy render inside the wall too
-      lazyRenderAds(document.getElementById('wall'));
+      // Request ads only if ads mode != off
+      const c=getConsent(); if(c && c.adsMode!=='off'){ requestVisibleAds($('#wall')); }
     }
 
-    // =============== WTF MODE TOGGLE ===============
-    const wall = document.getElementById('wall');
-    const toggleWallBtn = document.getElementById('toggleWall');
-    const centerBtn = document.getElementById('centerWall');
-
-    toggleWallBtn.addEventListener('click', ()=>{
-      const nowShown = wall.style.display === 'block';
-      if(nowShown){ wall.style.display='none'; wall.setAttribute('aria-hidden','true'); toggleWallBtn.textContent='Enable WTF Mode'; }
-      else { wall.style.display='block'; wall.setAttribute('aria-hidden','false'); toggleWallBtn.textContent='Disable WTF Mode'; populateWall(); centerWall(); }
+    const wall=$('#wall');
+    $('#toggleWall').addEventListener('click', ()=>{
+      const shown = wall.style.display==='block';
+      if(shown){ wall.style.display='none'; wall.setAttribute('aria-hidden','true'); $('#toggleWall').textContent='Enable SuperWall'; }
+      else { wall.style.display='block'; wall.setAttribute('aria-hidden','false'); $('#toggleWall').textContent='Disable SuperWall'; populateSuperWall(); centerWall(); }
     });
 
     function centerWall(){
-      const canvas = document.getElementById('canvas');
-      if(!canvas) return;
-      // Center the scrollable canvas inside the wall container
-      const cont = wall; // wall has its own scrollbars (browser window also scrolls, but we keep canvas big inside)
-      // Scroll the window to bring the wall into view first
+      const canvas=$('#canvas'); if(!canvas) return;
       wall.scrollIntoView({behavior:'smooth', block:'center'});
-      // Then center within the canvas after a short delay
       setTimeout(()=>{
-        const x = (canvas.scrollWidth - cont.clientWidth)/2;
-        const y = (canvas.scrollHeight - cont.clientHeight)/2;
-        cont.scrollTo({left:x, top:y, behavior:'smooth'});
-      }, 250);
+        const x=(canvas.scrollWidth - wall.clientWidth)/2;
+        const y=(canvas.scrollHeight - wall.clientHeight)/2;
+        wall.scrollTo({left:x, top:y, behavior:'smooth'});
+      }, 300);
     }
-    centerBtn.addEventListener('click', centerWall);
+    $('#centerWall').addEventListener('click', centerWall);
+
+    // =================== Analytics placeholder (optional) ===================
+    let analyticsLoaded=false;
+    function loadAnalyticsOnce(){ if(analyticsLoaded) return; analyticsLoaded=true; /* Example (Plausible):
+      const ps=document.createElement('script'); ps.defer=true; ps.setAttribute('data-domain','adwall.net'); ps.src='https://plausible.io/js/script.js'; document.head.appendChild(ps);
+    */ }
   </script>
 </body>
 </html>
