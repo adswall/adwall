@@ -1,168 +1,265 @@
 <!--
-  AdWall — just ads, everywhere
+  AdWall Lab — Ad recommendation museum
+  Goal: keep the WTF “just ads” vibe, BUT add enough real content + sane ad density to better fit AdSense policies.
+
+  How to use (beginner):
+  1) Replace the four YOUR_SLOT_ID_* values below with your AdSense ad unit IDs.
+  2) Keep your AdSense client ID (publisher): ca-pub-9411950027978678
+  3) Deploy this single file. Start in "Balanced" mode. Toggle "WTF Mode" for the full wall.
+
+  Compliance tips:
+  - Provide real, unique content (About, Method, FAQ) — already included below (replace with your own words to be even safer).
+  - Label ads as “Advertisement”. Do NOT invite clicks. No sticky/popups.
+  - Keep a reasonable ad density by default. The WTF grid is behind a user toggle.
+  - Add Privacy/Contact links.
+
+  License header (optional):
   Copyright (c) 2025 [YOUR NAME or ORG]
   SPDX-License-Identifier: LicenseRef-SA-NC-1.0
-
-  NOTE:
-  - Remplacez vos IDs d’emplacements AdSense dans AD_SLOTS (YOUR_SLOT_ID_*).
-  - Le publisher ID AdSense (client) ci-dessous doit être le vôtre: ca-pub-9411950027978678.
-  - Page volontairement sans contenu éditorial; vérifiez les politiques AdSense.
 -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
+  <meta name="robots" content="index,follow" />
   <meta name="referrer" content="origin-when-cross-origin" />
-  <title>AdWall — just ads, everywhere</title>
+  <title>AdWall Lab — Ad recommendation museum</title>
+  <meta name="description" content="AdWall Lab is a playful, educational page about online advertising. Compare ad recommendations in a safe, content-first layout — then switch to WTF mode to see a full ad wall." />
 
-  <!-- AdSense global loader (charge au démarrage) -->
+  <!-- AdSense loader (ok to load in head; we render units lazily when visible) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script>
 
   <style>
-    :root{
-      --bg:#0b1220;        /* dark background so ads stand out */
-      --grid:#1e293b;      /* grid lines */
-      --cross:#94a3b8;     /* center cross */
-      --title:#e2e8f0;     /* page title */
-    }
-    html,body{height:100%;}
-    body{
-      margin:0; background:var(--bg); color:var(--title);
-      overflow:scroll; overscroll-behavior:none;
-      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    }
-    /* Sticky header with centered title */
-    header{
-      position:sticky; top:0; left:0; right:0; z-index:5;
-      display:flex; justify-content:center; align-items:center;
-      height:56px; background:rgba(11,18,32,.7); backdrop-filter: blur(6px);
-      border-bottom:1px solid rgba(148,163,184,.25);
-    }
-    header h1{margin:0; font-size:18px; letter-spacing:.5px;}
+    :root{ --bg:#0b1220; --ink:#e2e8f0; --muted:#9aa7b7; --brand:#38bdf8; --card:#0f172a; --line:#1e293b; --accent:#60a5fa; --ok:#16a34a; --warn:#f59e0b; --br:14px; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--ink)}
+    a{color:var(--brand)}
 
-    /* Huge canvas area to allow 4-way scroll */
-    .canvas{
-      position:relative;
-      width:320vw;   /* 3.2× viewport width */
-      height:320vh;  /* 3.2× viewport height */
-      margin:0 auto;
-      background-image: linear-gradient(transparent 95%, var(--grid) 95%), linear-gradient(90deg, transparent 95%, var(--grid) 95%);
-      background-size:60px 60px; /* subtle grid */
-    }
-    /* Center cross (vertical + horizontal guide lines) */
-    .canvas:before, .canvas:after{ content:""; position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:none; }
-    .canvas:before{ /* vertical line */ left:50%; right:auto; width:2px; background:var(--cross); transform:translateX(-1px); }
-    .canvas:after{  /* horizontal line */ top:50%; bottom:auto; height:2px; background:var(--cross); transform:translateY(-1px); }
+    header{position:sticky; top:0; z-index:50; backdrop-filter:blur(8px); background:rgba(11,18,32,.7); border-bottom:1px solid rgba(150,170,190,.25)}
+    .wrap{max-width:1100px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:16px}
+    .brand{display:flex; gap:10px; align-items:center; text-decoration:none; color:var(--ink)}
+    .brand .logo{font-size:24px}
+    nav{margin-left:auto; display:flex; gap:14px}
+    nav a{text-decoration:none; color:var(--ink); opacity:.85}
+    nav a:hover{opacity:1}
 
-    /* Quadrants anchored to center */
-    .quad{ position:absolute; display:grid; gap:16px; padding:24px; box-sizing:border-box; }
-    .quad.grid-6x6{ grid-template-columns: repeat(6, minmax(260px, 1fr)); }
-    #quad-nw{ right:50%; bottom:50%; width:150vw; height:150vh; }
-    #quad-ne{  left:50%; bottom:50%; width:150vw; height:150vh; }
-    #quad-sw{ right:50%;    top:50%; width:150vw; height:150vh; }
-    #quad-se{  left:50%;    top:50%; width:150vw; height:150vh; }
+    .hero{max-width:1100px; margin:20px auto; padding:0 16px}
+    .hero h1{margin:.2em 0 .2em; font-size:28px}
+    .hero p{margin:0; color:var(--muted)}
 
-    /* Ad tiles */
-    .tile{
-      position:relative;
-      background:#0f172a; border:1px solid #0b1220; border-radius:14px; padding:10px;
-      display:flex; align-items:center; justify-content:center; min-height:180px;
-      box-shadow:0 10px 24px rgba(0,0,0,.25);
-    }
-    .tile .label{ position:absolute; inset:auto 10px 10px auto; color:#94a3b8; font-size:11px; font-weight:600; }
+    /* Content sections */
+    .section{max-width:1100px; margin:20px auto; padding:0 16px}
+    .grid{display:grid; gap:16px}
+    @media(min-width:900px){ .grid.cols-3{ grid-template-columns:2fr 1fr 1fr } }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:var(--br); padding:16px}
+    .card h3{margin-top:0}
 
-    /* AdSense <ins> must be display:block */
-    .adsbygoogle{ display:block; width:100%; min-height:120px; }
+    /* Balanced layout: content-first with a few ads */
+    .adblock{border:1px dashed #2b3a4d; background:#0c1425; padding:10px; border-radius:12px; position:relative}
+    .adblock .label{position:absolute; top:6px; right:8px; font-size:11px; color:#9aa7b7; letter-spacing:.5px}
+    .adsbygoogle{display:block; width:100%; min-height:120px}
 
-    /* Center legend */
-    .legend{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:4; color:#cbd5e1; font-size:12px; text-align:center; background:rgba(2,6,23,.7); padding:6px 10px; border-radius:8px; border:1px solid rgba(148,163,184,.25); }
+    /* WTF “wall” grid (hidden by default) */
+    .wall{display:none; position:relative; margin:30px auto; max-width:1100px; border:1px solid var(--line); border-radius:var(--br)}
+    .wall .toolbar{display:flex; gap:10px; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid var(--line)}
+    .wall .toolbar .mode{display:flex; gap:8px; align-items:center}
+    .wall .canvas{position:relative; width:220vw; height:220vh; margin:0; background-image: linear-gradient(transparent 95%, #1e293b 95%), linear-gradient(90deg, transparent 95%, #1e293b 95%); background-size:60px 60px}
+    .wall .canvas:before,.wall .canvas:after{content:""; position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:none}
+    .wall .canvas:before{left:50%; width:2px; background:#94a3b8; transform:translateX(-1px)}
+    .wall .canvas:after{top:50%; height:2px; background:#94a3b8; transform:translateY(-1px)}
+    .quad{position:absolute; display:grid; gap:14px; padding:20px}
+    .quad.grid-4x4{grid-template-columns: repeat(4, minmax(240px,1fr))}
+    #q-nw{right:50%; bottom:50%; width:100vw; height:100vh}
+    #q-ne{left:50%; bottom:50%; width:100vw; height:100vh}
+    #q-sw{right:50%; top:50%; width:100vw; height:100vh}
+    #q-se{left:50%; top:50%; width:100vw; height:100vh}
+    .tile{position:relative; background:#0f172a; border:1px solid #0b1220; border-radius:12px; padding:8px; min-height:160px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .tile .label{position:absolute; inset:auto 8px 8px auto; color:#9aa7b7; font-size:11px}
 
-    /* Footer note (license/info) — discret */
-    footer{ position:fixed; right:10px; bottom:10px; color:#94a3b8; font-size:11px; background:rgba(2,6,23,.6); padding:6px 8px; border-radius:8px; border:1px solid rgba(148,163,184,.25); }
-    footer a{ color:#cbd5e1; text-decoration:underline; }
+    .controls{display:flex; gap:10px; align-items:center}
+    .btn{background:var(--accent); color:#fff; border:0; padding:8px 12px; border-radius:10px; cursor:pointer}
+    .btn.secondary{background:#1f2937}
+    .hint{color:var(--muted); font-size:13px}
+
+    footer{max-width:1100px; margin:40px auto 50px; padding:0 16px; color:var(--muted); font-size:13px}
   </style>
 </head>
 <body>
   <header>
-    <h1>AdWall — just ads, everywhere</h1>
+    <div class="wrap">
+      <a class="brand" href="#"><span class="logo">🧱</span><strong>AdWall Lab</strong></a>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#method">Method</a>
+        <a href="#faq">FAQ</a>
+        <a href="#exhibits">Exhibits</a>
+      </nav>
+    </div>
   </header>
 
-  <div id="canvas" class="canvas" aria-label="Scrollable advertising canvas">
-    <div class="legend">Scroll ↔ ↕ to explore the ad wall</div>
+  <section class="hero" id="top">
+    <h1>The ad recommendation museum — content first, then a WTF wall</h1>
+    <p>AdWall Lab is an educational experiment about online advertising. We explain how display ads work and let you compare recommendations. By default, we keep a content‑first, respectful layout. If you want the full “wall of ads”, switch on WTF Mode below.</p>
+  </section>
 
-    <!-- Four quadrants (all AdSense in this version) -->
-    <section id="quad-nw" class="quad grid-6x6" aria-label="North-West quadrant"></section>
-    <section id="quad-ne" class="quad grid-6x6" aria-label="North-East quadrant"></section>
-    <section id="quad-sw" class="quad grid-6x6" aria-label="South-West quadrant"></section>
-    <section id="quad-se" class="quad grid-6x6" aria-label="South-East quadrant"></section>
-  </div>
+  <!-- Content-first layout with a few ad slots (balanced) -->
+  <section class="section grid cols-3" id="about">
+    <article class="card">
+      <h3>What is this?</h3>
+      <p>Online advertising funds much of the free web. Yet, most of us rarely see ads side by side from the user’s perspective. AdWall Lab offers a transparent, playful way to observe ads in context, learn common formats, and reflect on relevance, repetition, and brand safety.</p>
+      <p>We do not encourage clicks. Ads are clearly labeled. We avoid intrusive formats and keep page performance and accessibility in mind.</p>
+      <div class="adblock" aria-label="Advertisement">
+        <span class="label">Advertisement</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_1" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+    </article>
+    <aside class="card">
+      <h3>Glossary (short)</h3>
+      <p><strong>Display ad:</strong> a banner or visual unit served into a slot on a page. <strong>Contextual:</strong> targeted by page content. <strong>Behavioral:</strong> based on your past activity. <strong>Fill rate:</strong> share of requests that serve an ad.</p>
+      <div class="adblock" aria-label="Advertisement">
+        <span class="label">Advertisement</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_2" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+    </aside>
+    <aside class="card">
+      <h3>Notes on relevance</h3>
+      <p>Ads you see may differ from someone else’s due to location, device, consent, and cookies. Empty spaces can happen if no eligible ad is available at the moment.</p>
+      <div class="adblock" aria-label="Advertisement">
+        <span class="label">Advertisement</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_3" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section" id="method">
+    <div class="card">
+      <h3>Method & ethics</h3>
+      <p>We keep a content‑first approach, use clear ad labels, and avoid attention traps. Our goal is to observe recommendations — not to maximize revenue. We do not invite clicks and we don’t place ads in deceptive positions. We treat cookies and consent according to local requirements.</p>
+      <p>Technical note: we lazy‑render units that come into view to reduce network load and improve performance. This does not refresh ads automatically; it simply defers the first load until you scroll to them.</p>
+      <div class="adblock" aria-label="Advertisement">
+        <span class="label">Advertisement</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_4" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="exhibits">
+    <div class="card">
+      <div class="controls">
+        <strong>Exhibits</strong>
+        <button class="btn" id="toggleWall">Enable WTF Mode</button>
+        <button class="btn secondary" id="centerWall" title="Center the wall">Center</button>
+        <span class="hint">Default is balanced (few units). WTF Mode reveals a large 4‑way scrolling wall.</span>
+      </div>
+    </div>
+
+    <!-- WTF WALL (hidden by default; shows on toggle) -->
+    <div id="wall" class="wall" aria-hidden="true">
+      <div class="toolbar">
+        <div class="mode"><strong>WTF Mode</strong> · <span class="hint">Big grid, still no popups, no sticky overlays.</span></div>
+        <div class="hint">Tip: use a trackpad or hold Shift+Wheel to scroll horizontally.</div>
+      </div>
+      <div id="canvas" class="canvas" aria-label="Scrollable advertising canvas">
+        <section id="q-nw" class="quad grid-4x4" aria-label="North-West quadrant"></section>
+        <section id="q-ne" class="quad grid-4x4" aria-label="North-East quadrant"></section>
+        <section id="q-sw" class="quad grid-4x4" aria-label="South-West quadrant"></section>
+        <section id="q-se" class="quad grid-4x4" aria-label="South-East quadrant"></section>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="card">
+      <h3>FAQ</h3>
+      <p><strong>Do you track me?</strong> We don’t run our own trackers. Ad networks may use cookies if you allowed them. You can use your browser’s ad/privacy settings any time.</p>
+      <p><strong>Why do I sometimes see nothing?</strong> Ad serving depends on eligibility, budget, geography, and your consent. Sometimes there’s simply no match right now.</p>
+      <p><strong>Can I use this page commercially?</strong> No. The code is published under a non‑commercial license (see footer). Contact us for commercial licensing.</p>
+    </div>
+  </section>
 
   <footer>
-    <span>License: SA‑NC 1.0 — non‑commercial only.</span>
+    <p>© 2025 AdWall Lab — Educational experiment · License: SA‑NC 1.0 (non‑commercial). · <a href="#top">Back to top</a></p>
   </footer>
 
   <script>
-    // 1) Center the view on the middle cross at load
-    function centerOnLoad(){
-      const c = document.getElementById('canvas');
-      const x = (c.scrollWidth - window.innerWidth) / 2;
-      const y = (c.scrollHeight - window.innerHeight) / 2;
-      // use standard values: 'auto' | 'smooth'
-      window.scrollTo({ left: x, top: y, behavior: 'auto' });
-    }
-    if (document.readyState === 'complete') centerOnLoad();
-    else window.addEventListener('load', centerOnLoad);
-
-    // 2) Populate each quadrant with AdSense tiles
-    // Replace with your own AdSense ad unit IDs
+    // =============== CONFIG ===============
+    const AD_CLIENT = 'ca-pub-9411950027978678';
     const AD_SLOTS = ['YOUR_SLOT_ID_1','YOUR_SLOT_ID_2','YOUR_SLOT_ID_3','YOUR_SLOT_ID_4'];
 
-    function createAdTile(slotId){
+    // =============== LAZY RENDER (balanced sections) ===============
+    function lazyRenderAds(container=document){
+      const insNodes = container.querySelectorAll('ins.adsbygoogle');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){ try{ (window.adsbygoogle=window.adsbygoogle||[]).push({}); }catch(err){}
+            io.unobserve(e.target);
+          }
+        });
+      }, {root:null, rootMargin:'200px', threshold:0});
+      insNodes.forEach(n=> io.observe(n));
+    }
+    if(document.readyState==='complete') lazyRenderAds();
+    else window.addEventListener('load', ()=> lazyRenderAds());
+
+    // =============== WTF WALL POPULATION ===============
+    function createTile(slotId){
       const wrap = document.createElement('div');
       wrap.className = 'tile';
-
       const ins = document.createElement('ins');
       ins.className = 'adsbygoogle';
       ins.setAttribute('style','display:block');
-      ins.setAttribute('data-ad-client','ca-pub-9411950027978678');
+      ins.setAttribute('data-ad-client', AD_CLIENT);
       ins.setAttribute('data-ad-slot', slotId);
       ins.setAttribute('data-ad-format','auto');
       ins.setAttribute('data-full-width-responsive','true');
-      wrap.appendChild(ins);
-
-      const label = document.createElement('span');
-      label.className = 'label';
-      label.textContent = 'AdSense';
-      wrap.appendChild(label);
-
+      const label = document.createElement('span'); label.className='label'; label.textContent='Advertisement';
+      wrap.appendChild(ins); wrap.appendChild(label);
       return wrap;
     }
 
-    function populate(containerId, rows=6, cols=6){
-      const el = document.getElementById(containerId);
-      const total = rows * cols;
-      for(let i=0;i<total;i++){
-        const slotId = AD_SLOTS[i % AD_SLOTS.length];
-        el.appendChild(createAdTile(slotId));
-      }
+    function populateWall(){
+      const quads = ['q-nw','q-ne','q-sw','q-se'];
+      quads.forEach(id=>{
+        const el = document.getElementById(id);
+        el.innerHTML = '';
+        const total = 16; // 4x4 grid = 16 tiles per quadrant
+        for(let i=0;i<total;i++){
+          const slot = AD_SLOTS[i % AD_SLOTS.length];
+          el.appendChild(createTile(slot));
+        }
+      });
+      // Lazy render inside the wall too
+      lazyRenderAds(document.getElementById('wall'));
     }
 
-    function requestAllAds(){
-      const nodes = document.querySelectorAll('ins.adsbygoogle');
-      window.adsbygoogle = window.adsbygoogle || [];
-      nodes.forEach(() => { try { window.adsbygoogle.push({}); } catch(e){} });
+    // =============== WTF MODE TOGGLE ===============
+    const wall = document.getElementById('wall');
+    const toggleWallBtn = document.getElementById('toggleWall');
+    const centerBtn = document.getElementById('centerWall');
+
+    toggleWallBtn.addEventListener('click', ()=>{
+      const nowShown = wall.style.display === 'block';
+      if(nowShown){ wall.style.display='none'; wall.setAttribute('aria-hidden','true'); toggleWallBtn.textContent='Enable WTF Mode'; }
+      else { wall.style.display='block'; wall.setAttribute('aria-hidden','false'); toggleWallBtn.textContent='Disable WTF Mode'; populateWall(); centerWall(); }
+    });
+
+    function centerWall(){
+      const canvas = document.getElementById('canvas');
+      if(!canvas) return;
+      // Center the scrollable canvas inside the wall container
+      const cont = wall; // wall has its own scrollbars (browser window also scrolls, but we keep canvas big inside)
+      // Scroll the window to bring the wall into view first
+      wall.scrollIntoView({behavior:'smooth', block:'center'});
+      // Then center within the canvas after a short delay
+      setTimeout(()=>{
+        const x = (canvas.scrollWidth - cont.clientWidth)/2;
+        const y = (canvas.scrollHeight - cont.clientHeight)/2;
+        cont.scrollTo({left:x, top:y, behavior:'smooth'});
+      }, 250);
     }
-
-    // Populate then ask AdSense to render
-    populate('quad-nw');
-    populate('quad-ne');
-    populate('quad-sw');
-    populate('quad-se');
-
-    if (document.readyState === 'complete') requestAllAds();
-    else window.addEventListener('load', requestAllAds);
+    centerBtn.addEventListener('click', centerWall);
   </script>
 </body>
 </html>
