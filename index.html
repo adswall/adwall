@@ -40,8 +40,8 @@
   </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_PLACEHOLDER"></script>
 
-  <!-- We DO NOT preload AdSense; it will load after consent via JS -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script> -->
+  <!-- AdSense global (ONE time per page) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411950027978678" crossorigin="anonymous"></script>
 
   <style>
     :root{ --bg:#0b1220; --ink:#e2e8f0; --muted:#9aa7b7; --brand:#38bdf8; --card:#0f172a; --line:#1e293b; --accent:#60a5fa; --ok:#16a34a; --warn:#f59e0b; --br:14px; }
@@ -142,6 +142,15 @@
   <section class="hero" id="top">
     <h1>The ad recommendation museum — cick on enable SuperWall to see the ads!</h1>
     <p>By default we propose <em>Safe Ads</em> (non‑personalized). You can switch to Personalized Ads in Cookie settings. SuperWall is a very large, 4‑direction scrollable grid to visualize ad placements of various sizes.</p>
+    <div class="adblock" aria-label="Advertisement">
+      <span class="label">Advertisement</span>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9411950027978678"
+           data-ad-slot="PASTE_YOUR_AD_SLOT_ID"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
   </section>
 
   <!-- Content-first layout with a few AdSense slots (balanced) -->
@@ -150,26 +159,14 @@
       <h3>What is this?</h3>
       <p>Online advertising funds much of the free web. AdWall Lab offers a transparent, playful way to observe ads in context, learn common formats, and reflect on relevance, repetition, and brand safety.</p>
       <p>Ads are clearly labeled. We avoid intrusive formats and keep performance and accessibility in mind.</p>
-      <div class="adblock" aria-label="Advertisement">
-        <span class="label">Advertisement</span>
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_1" data-ad-format="auto" data-full-width-responsive="true"></ins>
-      </div>
     </article>
     <aside class="card">
       <h3>Glossary (short)</h3>
       <p><strong>Display ad:</strong> banner/visual unit. <strong>Contextual:</strong> targeted by page content. <strong>Behavioral:</strong> based on past activity. <strong>Fill rate:</strong> share of requests that serve an ad.</p>
-      <div class="adblock" aria-label="Advertisement">
-        <span class="label">Advertisement</span>
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_2" data-ad-format="auto" data-full-width-responsive="true"></ins>
-      </div>
     </aside>
     <aside class="card">
       <h3>Notes on relevance</h3>
       <p>Ads differ due to location, device, consent, and cookies. Empty spaces can happen if no eligible ad is available at the moment.</p>
-      <div class="adblock" aria-label="Advertisement">
-        <span class="label">Advertisement</span>
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_3" data-ad-format="auto" data-full-width-responsive="true"></ins>
-      </div>
     </aside>
   </section>
 
@@ -177,10 +174,6 @@
     <div class="card">
       <h3>Method & ethics</h3>
       <p>We keep a content‑first approach, use clear ad labels, and avoid attention traps. Our goal is to observe recommendations — not to maximize revenue. We do not invite clicks or place ads in deceptive positions. We treat cookies and consent according to local requirements.</p>
-      <div class="adblock" aria-label="Advertisement">
-        <span class="label">Advertisement</span>
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9411950027978678" data-ad-slot="YOUR_SLOT_ID_4" data-ad-format="auto" data-full-width-responsive="true"></ins>
-      </div>
     </div>
   </section>
 
@@ -260,7 +253,7 @@
   <script>
     // =================== CONFIG ===================
     const AD_CLIENT = 'ca-pub-9411950027978678';
-    const AD_SLOTS  = ['YOUR_SLOT_ID_1','YOUR_SLOT_ID_2','YOUR_SLOT_ID_3','YOUR_SLOT_ID_4'];
+    const AD_SLOTS  = ['PASTE_YOUR_AD_SLOT_ID'];
     const isAdTest  = location.search.includes('adtest=1');
 
     // If later you add providers, put their keys here and gate with consent as we do for AdSense
@@ -323,7 +316,7 @@
 
       // Load / skip providers
       if(c.adsMode==='off'){ /* nothing */ }
-      else { loadAdSenseOnce(); }
+      else { renderAdsIfAllowed(); }
 
       if(c.analytics){ loadAnalyticsOnce(); }
     }
@@ -332,23 +325,15 @@
     const saved=getConsent(); if(!saved){ showBanner(); } else { applyConsent(saved); }
 
     // =================== AD LOADING ===================
-    let adScriptLoaded=false;
-    function loadAdSenseOnce(){
-      if(adScriptLoaded){ requestVisibleAds(); return; }
-      if(isAdTest){ document.querySelectorAll('ins.adsbygoogle').forEach(n=> n.setAttribute('data-adtest','on')); }
-      const s=document.createElement('script');
-      s.async=true; s.src=`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`; s.crossOrigin='anonymous';
-      s.onload=()=>{ adScriptLoaded=true; requestVisibleAds(); };
-      document.head.appendChild(s);
-    }
-
-    function requestVisibleAds(container=document){
-      const nodes = container.querySelectorAll('ins.adsbygoogle');
-      window.adsbygoogle = window.adsbygoogle || [];
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{ if(e.isIntersecting){ try{ window.adsbygoogle.push({}); }catch(err){} io.unobserve(e.target); } });
-      }, {root:null, rootMargin:'200px', threshold:0});
-      nodes.forEach(n=> io.observe(n));
+    function renderAdsIfAllowed() {
+      try {
+        const c = getConsent();
+        if (!c || c.adsMode === 'off') return;
+        (adsbygoogle = window.adsbygoogle || []);
+        document.querySelectorAll('ins.adsbygoogle').forEach(function(el){
+          if (!el.dataset.pushed) { adsbygoogle.push({}); el.dataset.pushed = '1'; }
+        });
+      } catch(e) {}
     }
 
     // =================== SUPERWALL ===================
@@ -386,7 +371,7 @@
         }
       });
       // Request ads only if ads mode != off
-      const c=getConsent(); if(c && c.adsMode!=='off'){ requestVisibleAds($('#wall')); }
+      const c=getConsent(); if(c && c.adsMode!=='off'){ renderAdsIfAllowed(); }
     }
 
     const wall=$('#wall');
@@ -412,6 +397,12 @@
     function loadAnalyticsOnce(){ if(analyticsLoaded) return; analyticsLoaded=true; /* Example (Plausible):
       const ps=document.createElement('script'); ps.defer=true; ps.setAttribute('data-domain','adwall.net'); ps.src='https://plausible.io/js/script.js'; document.head.appendChild(ps);
     */ }
+  </script>
+  <script>
+    // Active les annonces de test si l'URL contient ?adtest=1
+    if (location.search.includes('adtest=1')) {
+      document.querySelectorAll('ins.adsbygoogle').forEach(el => el.setAttribute('data-adtest','on'));
+    }
   </script>
 </body>
 </html>
