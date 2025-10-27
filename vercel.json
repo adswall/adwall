@@ -2,6 +2,13 @@
   "version": 2,
 
   "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.adwall.net" }],
+      "destination": "https://adwall.net/:path*",
+      "permanent": true
+    },
+
     { "source": "/index.html", "destination": "/", "permanent": true },
     { "source": "/privacy",    "destination": "/privacy.html", "permanent": true },
     { "source": "/contact",    "destination": "/contact.html", "permanent": true }
