@@ -1,6 +1,5 @@
 {
   "version": 2,
-
   "redirects": [
     {
       "source": "/:path*",
@@ -8,12 +7,8 @@
       "destination": "https://adwall.net/:path*",
       "permanent": true
     },
-
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/privacy",    "destination": "/privacy.html", "permanent": true },
-    { "source": "/contact",    "destination": "/contact.html", "permanent": true }
+    { "source": "/index.html", "destination": "/", "permanent": true }
   ],
-
   "headers": [
     {
       "source": "/(.*)",
