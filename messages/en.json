@@ -1,0 +1,44 @@
+{
+  "Metadata": {
+    "title": "AdWall Lab — Ad recommendation museum",
+    "description": "AdWall Lab offers a transparent, playful way to observe ads in context. Switch to SuperWall for a huge ad grid."
+  },
+  "App": {
+    "title": "AdWall Lab",
+    "navAbout": "About",
+    "navMethod": "Method",
+    "navExhibits": "Exhibits",
+    "cookieSettings": "Cookie settings",
+    "heroTitle": "The ad recommendation museum",
+    "heroDesc": "By default we propose Safe Ads (non‑personalized). You can switch to Personalized Ads in Cookie settings.",
+    "footerRights": "© 2025 AdWall Lab — Educational experiment",
+    "footerPrivacy": "Privacy",
+    "footerContact": "Contact"
+  },
+  "SuperWall": {
+    "title": "SuperWall Canvas",
+    "desc": "A vast, 4-direction scrollable grid simulating the 'Million Dollar Homepage' but with algorithmic ad placement.",
+    "enable": "Enable SuperWall",
+    "disable": "Disable SuperWall"
+  },
+  "Consent": {
+    "bannerText": "This site proposes Safe Ads (non‑personalized) by default. Choose your preference.",
+    "reject": "Reject all",
+    "manage": "Manage",
+    "acceptSafe": "Use Safe Ads",
+    "modalTitle": "Cookie preferences (GDPR)",
+    "modalDesc": "Choose your ad & analytics preferences. You can change this anytime.",
+    "secAds": "Advertising",
+    "optNoAds": "No advertising",
+    "optSafe": "Safe Ads (non-personalized)",
+    "optSafeDesc": "Ads are shown based on context, not your history.",
+    "optPerso": "Personalized Ads",
+    "secAnalytics": "Analytics (Anonymous)",
+    "secAnalyticsDesc": "Help us improve traffic understanding.",
+    "close": "Close",
+    "save": "Save choices"
+  },
+  "Content": {
+     "title": "What is AdWall?"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "Metadata": {
+    "title": "AdWall Lab — Musée de la publicité",
+    "description": "AdWall Lab offre une façon transparente et ludique d'observer les publicités. Activez le SuperWall pour une grille géante."
+  },
+  "App": {
+    "title": "AdWall Lab",
+    "navAbout": "À propos",
+    "navMethod": "Méthode",
+    "navExhibits": "Expositions",
+    "cookieSettings": "Paramètres Cookies",
+    "heroTitle": "Le musée de la recommandation publicitaire",
+    "heroDesc": "Par défaut, nous proposons des Publicités Sûres (non personnalisées). Vous pouvez changer pour des Publicités Personnalisées dans les réglages.",
+    "footerRights": "© 2025 AdWall Lab — Expérience éducative",
+    "footerPrivacy": "Confidentialité",
+    "footerContact": "Contact"
+  },
+  "SuperWall": {
+    "title": "Toile SuperWall",
+    "desc": "Une vaste grille défilable dans 4 directions simulant la 'Million Dollar Homepage' avec un placement algorithmique.",
+    "enable": "Activer SuperWall",
+    "disable": "Désactiver SuperWall"
+  },
+  "Consent": {
+    "bannerText": "Ce site propose des Publicités Sûres (non personnalisées) par défaut. Choisissez votre préférence.",
+    "reject": "Tout rejeter",
+    "manage": "Gérer",
+    "acceptSafe": "Accepter Pubs Sûres",
+    "modalTitle": "Préférences Cookies (RGPD)",
+    "modalDesc": "Choisissez vos préférences pubs & analytiques. Modifiable à tout moment.",
+    "secAds": "Publicité",
+    "optNoAds": "Pas de publicité",
+    "optSafe": "Publicités Sûres (non personnalisées)",
+    "optSafeDesc": "Les pubs sont basées sur le contexte, pas votre historique.",
+    "optPerso": "Publicités Personnalisées",
+    "secAnalytics": "Analytique (Anonyme)",
+    "secAnalyticsDesc": "Aidez-nous à comprendre le trafic.",
+    "close": "Fermer",
+    "save": "Enregistrer"
+  },
+  "Content": {
+     "title": "Qu'est-ce que AdWall ?"
+  }
+}
